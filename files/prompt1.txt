@@ -1,0 +1,53 @@
+Quiero que hagas un script en python. Que dado un directorio raiz, guarde o genere en una tabla todos los ficheros y sus directorios y el tamaño en kb,mb o gb segun sea.
+La idea es que yo pueda buscar en la tabla por archivo, por fichero, etc
+
+
+La tabla se llamará "directorios" 
+campos:
+
+id : id del registro
+name : nombre del directorio o del archivo
+size:  tamaño en el disco, en KB, MB, o GB
+files: cantidad de ficheros, en caso de ser un directorio, si es un fichero entonces por defecto 0
+path: la ruta completa del directorio en donde se encuentra el directorio o el archivo.
+category : este valor se leerá de otra BD
+state : este valor se leerá de otra BD
+priority : este valor se leerá de otra BD
+
+
+crea los siguientes componentes:
+
+- json de configuración:
+
+{
+    "root" : "G:\\4K Video Downloader",
+    "db" : "D:\\Archivos\\Scripts\\YT\\FilesMapperDB\\db\\mapper.sqlite",
+    "db_info" : "D:\\Archivos\\Scripts\\YT\\FilesMapperDB\\db\\ytbot.sqlite",
+    "isFlagFiles" : true
+
+}
+
+En la carpeta \log se guardaran los logs necesarios para una trazabilidad del script.
+El script lo que tiene que hacer es lo siguiente, tiene que recorrer recursivamente todos los subdirectorios y archivos dentro del directorio root.
+y por cada directorio y por cada archivo tiene guardar un registro en la BD. 
+Si el flag isFlagFiles == false entonces solo hay que mapear los directorios y no los archivos.
+
+Otra cosa a tener en cuenta es que si en un directorio hay 4 subdirectorios y dentro hay 100 archivos, para ese directorio hay que registrar 100. 
+y en size poner el tamaño del directorio tal como aparece en windows explorer. hay que convertir los bytes a kb, mb, gb.
+
+Estos campos:
+
+category : este valor se leerá de otra BD
+state : este valor se leerá de otra BD
+priority : este valor se leerá de otra BD
+
+se leeran, de la bd db_info, y se hará una select a la tabla subcriptions a los campos category, state y priority por cada carpeta, si subcriptions.channelId == carpeta
+entonces la respuesta se guarda en la db mapper.sqlite. Esto solo se hará a nivel directorios no a nivel de archivos.
+
+Te recomiendo crear 3 modulos:
+
+logging.py para crear el log y inicializarlo
+repository.py para todo las transacciones de BD, tanto para db como db_info
+mapper.py el main del programa que se encargará de leer los directorios y llamar a logging y repository.
+
+
